@@ -3,6 +3,8 @@
 -export([start/0]).
 -export([filter/1]).
 
+-define (HEROKU_HOST_LENGTH, 14). % byte_size(<<".herokuapp.com">>).
+
 start() ->
   ets:new(?MODULE, [
     public,
@@ -18,8 +20,9 @@ filter({{Priority, Version, Timestamp, Hostname, <<"heroku">>, <<"router">>, Mes
         undefined ->
           Hostname;
         _ ->
-          ets:insert(?MODULE, {Hostname, HerokuName}),
-          HerokuName
+          ParsedHost = binary:part(HerokuName, {0, byte_size(HerokuName) - ?HEROKU_HOST_LENGTH}),
+          ets:insert(?MODULE, {Hostname, ParsedHost}),
+          ParsedHost
       end;
     HerokuName ->
       HerokuName
