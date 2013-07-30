@@ -24,9 +24,9 @@ filter({{Priority, Version, Timestamp, Hostname, <<"heroku">>, <<"router">>, Mes
     HerokuName ->
       HerokuName
   end,
-  {{Priority, Version, Timestamp, ActualName, <<"heroku">>, <<"router">>, MessageID, Message}, Fields};
+  {ok, {{Priority, Version, Timestamp, ActualName, <<"heroku">>, <<"router">>, MessageID, Message}, Fields}};
 filter({{Priority, Version, Timestamp, Hostname, AppName, ProcID, MessageID, Message}, Fields}) ->
-  {{Priority, Version, Timestamp, lookup(Hostname), AppName, ProcID, MessageID, Message}, Fields}.
+  {ok, {{Priority, Version, Timestamp, lookup(Hostname), AppName, ProcID, MessageID, Message}, Fields}}.
 
 lookup(Hostname) ->
   case ets:lookup(?MODULE, Hostname) of
