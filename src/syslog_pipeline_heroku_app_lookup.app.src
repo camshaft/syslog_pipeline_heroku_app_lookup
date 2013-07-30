@@ -1,0 +1,12 @@
+{application, syslog_pipeline_heroku_app_lookup, [
+  {description, "Convert drain ids to app names in syslog-pipeline"},
+  {vsn, "1"},
+  {modules, []},
+  {registered, []},
+  {applications, [
+    kernel,
+    stdlib
+  ]},
+  {mod, {syslog_pipeline_heroku_app_lookup, []}},
+  {env, []}
+]}.
