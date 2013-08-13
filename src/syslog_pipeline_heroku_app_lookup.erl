@@ -1,9 +1,7 @@
--module (syslog_pipeline_heroku_app_lookup).
+-module(syslog_pipeline_heroku_app_lookup).
 
 -export([start/0]).
 -export([filter/1]).
-
--define (HEROKU_HOST_LENGTH, 14). % byte_size(<<".herokuapp.com">>).
 
 start() ->
   ets:new(?MODULE, [
@@ -20,9 +18,15 @@ filter({{Priority, Version, Timestamp, Hostname, <<"heroku">>, <<"router">>, Mes
         undefined ->
           Hostname;
         _ ->
-          ParsedHost = binary:part(HerokuName, {0, byte_size(HerokuName) - ?HEROKU_HOST_LENGTH}),
-          ets:insert(?MODULE, {Hostname, ParsedHost}),
-          ParsedHost
+          HostLength = byte_size(HerokuName) - 14,
+          NewHost = case HerokuName of
+            <<ParsedHost:HostLength/binary, ".herokuapp.com">> ->
+              ParsedHost;
+            ParsedHost ->
+              ParsedHost
+          end,
+          ets:insert(?MODULE, {Hostname, NewHost}),
+          NewHost
       end;
     HerokuName ->
       HerokuName
